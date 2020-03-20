@@ -4,6 +4,8 @@ import json
 import pickle
 
 landmark_list = [
+    'BITS Pilani Hyderabad',
+    'Rajiv Gandhi International Airport',
     'Ananda Buddha Vihara',
     'Apollo Hospital Hyderabad',
     'Ashtalakshmi Temple',
@@ -24,7 +26,6 @@ landmark_list = [
     'Nizam\'s Institute of Medical Sciences',
     'Qutb Shahi Tombs',
     'Qutub Shahi Tombs',
-    'Rajiv Gandhi International Airport',
     'Ramoji Film City',
     'Salar Jung Museum',
     'Secunderabad Junction Railway Station',
@@ -34,7 +35,7 @@ landmark_list = [
 
 coordinates_list = {}
 URL = "http://dev.virtualearth.net/REST/v1/Locations/{}?key={}&o=json"
-
+coordinates_index_map = []
 
 for place in landmark_list:
     query = place.replace(' ', '%20')
@@ -49,10 +50,11 @@ for place in landmark_list:
     print("coordinates: ", coordinates)
     print()
     coordinates_list[place] = coordinates
+    coordinates_index_map.append(coordinates)
 
 print("final list: ", coordinates_list)
-dbfile = open('coordinates_list_db', 'ab+') 
+dbfile = open('coordinates_list_db', 'wb+') 
 pickle.dump(coordinates_list, dbfile)
 
-
-
+dbfile = open('coordinates_index_db', 'wb+') 
+pickle.dump(coordinates_index_map, dbfile)
