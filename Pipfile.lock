@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "68dcb704933b28c5f1f437db6d6800101e453b85b23a225cfd7b0df79943eac8"
+            "sha256": "1b2774ed440ff5c0d5bdec17d5b7170d800b5e6ffbfe7798a71e4994872f71a9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -29,6 +29,13 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "gmplot": {
+            "hashes": [
+                "sha256:2c8c14c160bf5f0ad941488a70731319da20a5d936bf4c78c7bfbc8bf2016953"
+            ],
+            "index": "pypi",
+            "version": "==1.2.0"
         },
         "idna": {
             "hashes": [
