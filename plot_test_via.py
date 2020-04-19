@@ -49,8 +49,8 @@ gmap = gmplot.GoogleMapPlotter(HYD_LAT, HYD_LNG, 11)
 gmap.marker(float(START_LAT), float(START_LNG))
 gmap.marker(float(DEST_LAT), float(DEST_LNG))
 
-for via in via_list:
-    gmap.marker(via[0], via[1], 'blue')
+# for via in via_list:
+    # gmap.marker(via[0], via[1], 'blue')
 
 colors = [
     'aliceblue', 
@@ -195,6 +195,11 @@ colors = [
     'yellowgreen', 
 ]
 
+def distance(a, b):
+    p1, p2 = a
+    p3, p4 = b
+    return math.sqrt(((p3 - p1) ** 2) + ((p4 - p2) ** 2))
+
 graph = {}
 
 for index, via in enumerate(via_list):
@@ -209,6 +214,23 @@ for index, via in enumerate(via_list):
     polyline2 = r.json()["routes"][0]["sections"][1]["polyline"]
     coordinates_list1 = fp.decode(polyline1)
     coordinates_list2 = fp.decode(polyline2)
+
+    # reducing graph size
+    temp_list1 = []
+    temp_list2 = []
+    temp_list1.append(coordinates_list1[0])
+    temp_list2.append(coordinates_list2[0])
+
+    for cood in coordinates_list1:
+        if distance(cood, temp_list1[-1]) >= 0.01:
+            temp_list1.append(cood)
+    
+    for cood in coordinates_list2:
+        if distance(cood, temp_list2[-1]) >= 0.01:
+            temp_list2.append(cood)
+
+    coordinates_list1 = temp_list1
+    coordinates_list2 = temp_list2
 
     coordinates = coordinates_list1 + coordinates_list2
     coordinates = [(START_LAT, START_LNG)] + coordinates + [(DEST_LAT, DEST_LNG)]
@@ -273,31 +295,26 @@ for i in range(0, len(coordinates), 1000):
     res = requests.post(temp_url, json.dumps(param))
     print(res.text)
     data = res.json()
-    for distance in data['resourceSets'][0]['resources'][0]['results']:
-        node = distance['originIndex']
-        # dist = distance['travelDistance']
-        dist = distance['travelDuration']
-        print("node: {}, dist: {}".format(node, dist))
+    for dist in data['resourceSets'][0]['resources'][0]['results']:
+        node = dist['originIndex']
+        # dist_travel = dist['travelDistance']
+        dist_travel = dist['travelDuration']
+        print("node: {}, dist: {}".format(node, dist_travel))
 
-        if (dist == -1):
-            dist = INFINITY
+        if (dist_travel == -1):
+            dist_travel = INFINITY
         pos = i + node
-        distance_matrix[coordinates[node]] = dist
+        distance_matrix[coordinates[node]] = dist_travel
 
 
 # print(distance_matrix)
 
 
 def h_dist_dest(a):
-    p1, p2 = a
-    p3 = DEST_LAT
-    p4 = DEST_LNG
-    return math.sqrt(((p3 - p1) ** 2) + ((p4 - p1) ** 2))
 
-def distance(a, b):
-    p1, p2 = a
-    p3, p4 = b
-    return math.sqrt(((p3 - p1) ** 2) + ((p4 - p1) ** 2))
+    if distance_matrix.get(a) != None:
+        return distance_matrix[a]
+    return INFINITY
 
 
 # a star implementation
@@ -318,6 +335,7 @@ while len(open_list) > 0:
     closed_list.append(node)
 
     node = node[1]
+    gmap.marker(node[0], node[1], 'blue')
 
     if (node == (DEST_LAT, DEST_LNG)):
         print("found")
@@ -338,6 +356,7 @@ while len(open_list) > 0:
             parent[child] = node
             g[child] = g_temp
             f = g[child] + h_dist_dest(child)
+            # f = g[child] + distance(child, (DEST_LAT, DEST_LNG))
             if child not in closed_list:
                 open_list.append((f, child))
             
