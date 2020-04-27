@@ -49,8 +49,9 @@ gmap = gmplot.GoogleMapPlotter(HYD_LAT, HYD_LNG, 11)
 gmap.marker(float(START_LAT), float(START_LNG))
 gmap.marker(float(DEST_LAT), float(DEST_LNG))
 
-# for via in via_list:
-    # gmap.marker(via[0], via[1], 'blue')
+
+for via in via_list:
+    gmap.marker(via[0], via[1], 'blue')
 
 colors = [
     'aliceblue', 
@@ -335,7 +336,7 @@ while len(open_list) > 0:
     closed_list.append(node)
 
     node = node[1]
-    gmap.marker(node[0], node[1], 'blue')
+    gmap.marker(node[0], node[1], 'brown')
 
     if (node == (DEST_LAT, DEST_LNG)):
         print("found")
@@ -355,8 +356,8 @@ while len(open_list) > 0:
         if gv > g_temp:
             parent[child] = node
             g[child] = g_temp
-            f = g[child] + h_dist_dest(child)
-            # f = g[child] + distance(child, (DEST_LAT, DEST_LNG))
+            # f = g[child] + h_dist_dest(child)
+            f = g[child] + distance(child, (DEST_LAT, DEST_LNG))
             if child not in closed_list:
                 open_list.append((f, child))
             
